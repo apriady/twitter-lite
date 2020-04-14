@@ -96,6 +96,23 @@ class Twitter {
     });
   }
 
+  /**
+   * Parse the JSON from a Response object and add the Headers under `_headers`
+   * @param {Response} response - the Response object returned by Fetch
+   * @return {Promise<object>}
+   * @private
+   */
+  static _handleMedia(response) {
+    const headers = response.headers.raw(); // TODO: see #44
+    // Return empty response on 204 "No content"
+    if (response.status === 204)
+      return {
+        _headers: headers,
+      };
+    // Otherwise, parse arrayBuffer
+    return response.arrayBuffer();
+  }
+
   async getBearerToken() {
     const headers = {
       Authorization:
@@ -175,7 +192,7 @@ class Twitter {
    */
   _makeRequest(method, resource, parameters) {
     const requestData = {
-      url: `${this.url}/${resource}.json`,
+      url: this.config.subdomain === 'ton' ? `${this.url}/${resource}` : `${this.url}/${resource}.json`,
       method,
     };
     if (parameters)
@@ -213,7 +230,7 @@ class Twitter {
     );
 
     return Fetch(requestData.url, { headers })
-      .then(Twitter._handleResponse)
+      .then(this.config.subdomain === 'ton' ? Twitter._handleMedia : Twitter._handleResponse)
       .then(results =>
         'errors' in results ? Promise.reject(results) : results
       );
