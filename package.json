@@ -6,7 +6,7 @@
     "twitter.js",
     "stream.js"
   ],
-  "main": "dist/twitter.js",
+  "main": "twitter.js",
   "module": "dist/twitter.m.js",
   "repository": "draftbit/twitter-lite",
   "homepage": "https://github.com/draftbit/twitter-lite",
